@@ -16,7 +16,9 @@ void loop()
   int16_t ly = 0;
   int16_t rx = 0;
   int16_t ry = 0;
-  hal_joystick_get(lx,ly,rx,ry);
+  bool lb = false;
+  bool rb = false;
+  hal_joystick_get(lx,ly,rx,ry, lb, rb);
  
   if (currentMillis - previousMillis >= interval) 
   {

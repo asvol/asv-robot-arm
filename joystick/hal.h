@@ -21,7 +21,7 @@ void  hal_loop();
 //                  JOYSTICK
 // ────────────────────────────────────────────────
 
-void hal_joystick_get(int16_t& lx, int16_t& ly,int16_t& rx, int16_t& ry);
+void hal_joystick_get(int16_t& lx, int16_t& ly,int16_t& rx, int16_t& ry, bool& lb, bool& rb);
 
 // ────────────────────────────────────────────────
 //                  DISPLAY
