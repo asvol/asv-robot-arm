@@ -6,6 +6,7 @@ const unsigned long interval = 100;   // 100 мс = 0.1 секунды
 void setup()
 {
   hal_setup();
+  pinMode(A6, INPUT);
 }
 
 void loop()
@@ -20,7 +21,7 @@ void loop()
   bool rb = false;
   hal_joystick_get(lx,ly,rx,ry, lb, rb);
  
-  if (currentMillis - previousMillis >= interval) 
+  if (currentMillis - previousMillis >= interval)
   {
     previousMillis = currentMillis;
     char buf[16];
@@ -36,6 +37,27 @@ void loop()
     snprintf(buf, sizeof(buf), "%4d", ry * 100 / 256);
     hal_display_print(8,2,HAL_DISPLAY_FONT_LARGE,buf);
   
+    if (lb)
+    {
+      hal_display_print(0,4,HAL_DISPLAY_FONT_LARGE,"++++");
+    }
+    else
+    {
+      hal_display_print(0,4,HAL_DISPLAY_FONT_LARGE,"    ");
+    }
+      
+    if (rb)
+    {
+      hal_display_print(8,4,HAL_DISPLAY_FONT_LARGE,"++++");
+    }
+    else
+    {
+      hal_display_print(8,4,HAL_DISPLAY_FONT_LARGE,"    ");
+    }
+
+    int val = analogRead(A6);
+    snprintf(buf, sizeof(buf), "%-4d", val);
+    hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,buf);
   }
   
 }

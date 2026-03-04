@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include <U8g2lib.h>
 #include <GyverJoy.h>
+#include <Button.h>
 
 
 #define SERIAL_BAUD  115200
@@ -13,22 +14,16 @@
 
 #define HAL_JOYSTICK_LEFT_X A3
 #define HAL_JOYSTICK_LEFT_Y A2
-#define HAL_JOYSTICK_LEFT_SW D3
+#define HAL_JOYSTICK_LEFT_SW 3
 
 #define HAL_JOYSTICK_RIGHT_X A1
 #define HAL_JOYSTICK_RIGHT_Y A0
-#define HAL_JOYSTICK_RIGHT_SW D2
+#define HAL_JOYSTICK_RIGHT_SW 2
 
 #define LOG(str) Serial.print("#=> "); Serial.println(str);
 
 // Состояния
-enum HAL_BUTTON_STATE 
-{
-    HAL_BUTTON_STATE_IDLE,               // кнопка отпущена, ждём нажатия
-    HAL_BUTTON_STATE_DEBOUNCE,           // защита от дребезга
-    HAL_BUTTON_STATE_PRESSED,            // кнопка нажата, считаем время
-    HAL_BUTTON_STATE_WAITING_RELEASE,    // уже сработало действие, ждём отпускания
-};
+
 
 // ────────────────────────────────────────────────
 //                  JOYSTICK
@@ -39,8 +34,11 @@ GyverJoy joyLY(HAL_JOYSTICK_LEFT_Y);
 GyverJoy joyRX(HAL_JOYSTICK_RIGHT_X);
 GyverJoy joyRY(HAL_JOYSTICK_RIGHT_Y);
 
-HAL_BUTTON_STATE lb = HAL_BUTTON_STATE_IDLE;
-HAL_BUTTON_STATE rb = HAL_BUTTON_STATE_IDLE;
+Button joyLB(HAL_JOYSTICK_LEFT_SW);
+Button joyRB(HAL_JOYSTICK_RIGHT_SW);
+bool joyLBPressed = false;
+bool joyRBPressed = false;
+
 
 void hal_joystick_setup(void)
 {
@@ -63,15 +61,32 @@ void hal_joystick_setup(void)
     joyRY.invert(true);
     joyRY.calibrate();
     joyRY.deadzone(40);         
-    joyRY.exponent(GJ_LINEAR );         
+    joyRY.exponent(GJ_LINEAR );   
+
+    joyLB.begin();
+    joyRB.begin();
 }
 
 void hal_joystick_loop(void)
 {
-  joyLX.tick();
-  joyLY.tick();
-  joyRX.tick();
-  joyRY.tick();
+    joyLX.tick();
+    joyLY.tick();
+    joyRX.tick();
+    joyRY.tick();
+    
+    if (joyLB.toggled()) {
+		if (joyLB.read() == Button::PRESSED)
+			joyLBPressed = true;
+		else
+			joyLBPressed = false;
+	}
+    if (joyRB.toggled()) {
+		if (joyRB.read() == Button::PRESSED)
+			joyRBPressed = true;
+		else
+			joyRBPressed = false;
+	}
+    
 }
 
 void hal_joystick_get(int16_t& lx, int16_t& ly,int16_t& rx, int16_t& ry, bool& lb, bool& rb)
@@ -80,6 +95,18 @@ void hal_joystick_get(int16_t& lx, int16_t& ly,int16_t& rx, int16_t& ry, bool& l
     ly = joyLY.value();
     rx = joyRX.value();
     ry = joyRY.value();
+    
+    lb = joyLBPressed;
+    rb = joyRBPressed;
+    
+}
+
+// ────────────────────────────────────────────────
+//                  KEYBOARD
+// ────────────────────────────────────────────────
+
+void hal_keyboard_get(bool& lb, bool& rb, bool& tb, bool& bb)
+{
     
 }
 
