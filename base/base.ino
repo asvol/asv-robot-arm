@@ -30,7 +30,7 @@ int servo_yaw_angle = 0;
 void setup() {
     Serial.begin(115200);
   servo_yaw.attach(HAL_SERVO_PIN_YAW);
-  servo_yaw.write(180);
+  
 }
 
 bool readIntField(const char* src, const char* key, int* value)
@@ -110,26 +110,45 @@ ControlPacket* serialGetPacket()
     return &packet;
 }
 
+void servo_inc(int& current, int delta)
+{
+    current += delta / 25;
+    if (current < 0) 
+    {
+        current = 0;
+    }
+    if (current > 180)
+    {
+        current = 180;
+    }
+}
+
 void loop() {
 
   
   serialParserUpdate(&Serial);
   if (serialPacketAvailable())
   {
-    Serial.print("OK");
     ControlPacket* p = serialGetPacket();
-    if (p->RX > 0)
+    if (p->REC == 2)
     {
-      servo_yaw_angle = map(servo_yaw_angle + 10,0,180,0,180);
-      servo_yaw.write(servo_yaw_angle);
+        servo_yaw_angle = 180;    
     }
-    if (p->RX < 0)
+    else if (p->REC == 4)
     {
-      servo_yaw_angle = map(servo_yaw_angle - 10,0,180,0,180);
-      servo_yaw.write(servo_yaw_angle);
+        servo_yaw_angle = 0;
     }
-    
+    else if (p->REC == 5)
+    {
+        servo_yaw_angle = 90;
+    }
+    else
+    {
+        servo_inc(servo_yaw_angle, p->RX);
+    }
   }
+
+  servo_yaw.write(servo_yaw_angle);    
   
   
   
