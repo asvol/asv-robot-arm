@@ -59,8 +59,40 @@ void loop()
     }
 
     int val = analogRead(A6);
-    snprintf(buf, sizeof(buf), "%-4d", val);
-    hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,buf);
+    int key = 0;
+    if (val >= 0 && val < 200)
+    {
+        key = 1;
+        hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,"  DOWN  ");
+    } 
+    else if (val >= 200 && val < 350)
+    {
+        key = 2;
+        hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,"  RGHT  ");
+    }
+    else if (val >= 350 && val < 500)
+    {
+        key = 3;
+        hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,"   UP   ");
+    }
+    else if (val >= 500 && val < 650)
+    {
+        key = 4;
+        hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,"  LEFT  ");
+    }
+    else if (val >= 650 && val < 800)
+    {
+        key = 5;
+        hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,"  CENT  ");
+    }
+    else 
+    {
+        key = 0;
+        hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,"       ");
+    }
+
+    //snprintf(buf, sizeof(buf), "%-4d", val);
+    //hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,buf);
 
 
 
@@ -70,7 +102,7 @@ void loop()
     Serial.print("LY="); Serial.print(ly);
     Serial.print("LB="); Serial.print(lb);
     Serial.print("RB="); Serial.print(rb);
-    Serial.print("REC="); Serial.print(0);
+    Serial.print("REC="); Serial.print(key);
     Serial.println();
   }
   
