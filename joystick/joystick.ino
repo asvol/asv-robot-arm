@@ -25,6 +25,9 @@ void loop()
   {
     previousMillis = currentMillis;
     char buf[16];
+
+
+    
     snprintf(buf, sizeof(buf), "%-4d", lx * 100 / 256);
     hal_display_print(0,0,HAL_DISPLAY_FONT_LARGE,buf);
 
@@ -58,6 +61,17 @@ void loop()
     int val = analogRead(A6);
     snprintf(buf, sizeof(buf), "%-4d", val);
     hal_display_print(0,6,HAL_DISPLAY_FONT_LARGE,buf);
+
+
+
+    Serial.print("RX="); Serial.print(rx);
+    Serial.print("RY="); Serial.print(ry);
+    Serial.print("LX="); Serial.print(lx);
+    Serial.print("LY="); Serial.print(ly);
+    Serial.print("LB="); Serial.print(lb);
+    Serial.print("RB="); Serial.print(rb);
+    Serial.print("REC="); Serial.print(0);
+    Serial.println();
   }
   
 }
